@@ -17,7 +17,6 @@ class TemplateMatcher:
         for template in self.templates:
             res = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
             loc = np.where(res >= 0.7)
-
             for pt in zip(*loc[::-1]):
                 points.append(pt)
 
@@ -29,3 +28,9 @@ class TemplateMatcher:
             if all(abs(p[0]-fp[0])>min_dist or abs(p[1]-fp[1])>min_dist for fp in filtered):
                 filtered.append(p)
         return filtered
+
+    def get_closest(self, points, center=(512,384)):
+        """Return the point closest to the screen center (or given center)."""
+        if not points:
+            return None
+        return min(points, key=lambda p: (p[0]-center[0])**2 + (p[1]-center[1])**2)
